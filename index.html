@@ -1,0 +1,92 @@
+
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport"
+              content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+        <meta name="apple-mobile-web-capable" content="yes">
+        <title>Recording Audio with Safari/Webkit</title>
+
+        <script src="adapter-latest.js"></script>
+        <script src="WebAudioTrack.js"></script>
+        <!-- <script src="https://rawgit.com/danielstorey/WebAudioTrack/master/WebAudioTrack.js"></script> -->
+
+        <style>
+
+            body {
+                touch-action: manipulation;
+            }
+
+            button {
+                background-color: #4CAF50;
+                border: none;
+                border-radius: 5px;
+                padding: 15px 32px;
+                width: 150px;
+                font-size: 16px;
+                margin: 4px 2px;
+            }
+        </style>
+
+    </head>
+    <body>
+
+    <div id="all">
+    
+            <button id="player">play</button>
+            <button id="recorder">record</button>
+
+    </div>
+    
+    <script>
+
+        var init = function() {
+            console.log("init")
+            var a1 = new WebAudioTrack();
+
+            // this prevents the 'first time recording silence' issue and challenges the dialog immediately
+            a1.startRecording(function() {
+                console.log("challenge recording dialog");
+                setTimeout( a1.stopRecording , 200);
+            });
+
+            var a3 = new WebAudioTrack();
+            a3.loadUrl("beep.mp3");
+
+            document.querySelector('#player').addEventListener("click", function() {
+                if (a3.isPlaying) {
+                    a3.stop()
+                    document.querySelector('#player').innerText = "play"
+                } else {
+                    a3.play()
+                    document.querySelector('#player').innerText = "stop"
+                }
+            });
+
+
+            document.querySelector('#recorder').addEventListener("click", function() {
+                if (a3.isRecording) {
+                    a3.stopRecording(function() {
+                    console.log("stop recording")
+                    document.querySelector('#recorder').innerText = "record"
+                    });
+
+                } else {
+                    a3.startRecording(function() {
+                    console.log("start recording")
+                    document.querySelector('#recorder').innerText = "stop rec"
+                    });
+                }
+            });
+
+            setInterval(function(){ 
+                if (a3.isPlaying === false && a3.isRecording === false) {
+                    document.querySelector('#player').innerText = "play"
+                }
+            }, 100);
+        }
+        init();
+
+    </script>
+    </body>
+    </html>
